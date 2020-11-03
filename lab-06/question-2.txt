@@ -1,0 +1,49 @@
+1. Create  a keyspace by name Library
+A. CREATE KEYSPACE library;
+
+2. Create a column family by name Library-Info with attributes 
+     Stud_Id Primary Key,
+     Counter_value of type Counter,
+    Stud_Name, Book-Name, Book-Id, Date_of_issue
+A. CREATE COLUMNFAMILY library_info(stud_id int, counter_value counter, stud_name text, book_name text, book_id int, date_of_issue text, PRIMARY KEY(stud_id, stud_name, book_name, book_id, date_of_issue));
+
+3. Insert the values into the table in batch
+A. 	cqlsh:library> UPDATE library_info SET counter_value = counter_value +1 WHERE stud_id = 111 and stud_name = 'Kratharth H' and book_name='Machine Learning' and book_id=4567 and date_of_issue = '14-10-2020';
+	cqlsh:library> UPDATE library_info SET counter_value = counter_value +1 WHERE stud_id = 112 and stud_name = 'Kusuma Nerella' and book_name='IOT applications' and book_id=4589 and date_of_issue = '17-09-2020';
+	cqlsh:library> UPDATE library_info SET counter_value = counter_value +1 WHERE stud_id = 125 and stud_name = 'Kedar Shenoy' and book_name='Data Science' and book_id=4555 and date_of_issue = '17-12-2020';
+	
+3. Display the details of the table created and increase the value of the counter
+A. cqlsh:library> DESCRIBE library_info ;
+
+CREATE TABLE library.library_info (
+    stud_id int,
+    stud_name text,
+    book_name text,
+    book_id int,
+    date_of_issue text,
+    counter_value counter,
+    PRIMARY KEY (stud_id, stud_name, book_name, book_id, date_of_issue)
+) WITH CLUSTERING ORDER BY (stud_name ASC, book_name ASC, book_id ASC, date_of_issue ASC)
+    AND bloom_filter_fp_chance = 0.01
+    AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}
+    AND comment = ''
+    AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32', 'min_threshold': '4'}
+    AND compression = {'chunk_length_in_kb': '64', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND crc_check_chance = 1.0
+    AND dclocal_read_repair_chance = 0.1
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair_chance = 0.0
+    AND speculative_retry = '99PERCENTILE';
+
+4. Write a query to show that a student with id 112 has taken a book “BDA” 2 times.
+A. SELECT * FROM library_info WHERE stud_id=112;
+
+5. Export the created column to a csv file
+A. COPY library_info TO '/home/kedar/Desktop/library.csv';
+
+6. Import a given csv dataset from local file system into Cassandra column family
+A. COPY library_info_duplicate FROM '/home/kedar/Desktop/library.csv';

@@ -1,0 +1,38 @@
+1. Create  a keyspace by name Employee
+
+A. CREATE KEYSPACE Employee WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 3};
+
+2. Create a column family by name Employee-Info with attributes Emp_Id Primary Key, Emp_Name, Designation, Date_of_Joining, Salary, Dept_Name.
+
+A. CREATE COLUMNFAMILY employee_info(emp_id int PRIMARY KEY, emp_name text, designation text, date_of_joining text, salary int, dept_name text);
+
+3. Insert the values into the table in batch
+
+A. BEGIN BATCH
+   INSERT INTO employee_info(emp_id, emp_name, designation, date_of_joining, salary, dept_name) VALUES (123, 'Aditya D', 'Member staff', '12-11-2005', 110000, 'Developer');
+   INSERT INTO employee_info(emp_id, emp_name, designation, date_of_joining, salary, dept_name) VALUES (124, 'Bhuvan B', 'Member staff', '12-11-2010', 90000, 'Developer');
+   INSERT INTO employee_info(emp_id, emp_name, designation, date_of_joining, salary, dept_name) VALUES (125, 'Chetan Rao', 'Member Tech staff', '12-10-2011', 95000, 'Testing');
+   INSERT INTO employee_info(emp_id, emp_name, designation, date_of_joining, salary, dept_name) VALUES (126, 'Damodhar Das', 'Member Tech staff', '12-10-2015', 100000, 'Testing');
+   INSERT INTO employee_info(emp_id, emp_name, designation, date_of_joining, salary, dept_name) VALUES (127, 'Rohan Gupta', 'Manager', '12-10-2017', 50000, 'Marketing');
+   APPLY BATCH ;
+
+4.  Update Employee name and Department of Emp-Id 121
+
+A. UPDATE employee_info SET emp_name = 'Kedar S', dept_name = 'Design' WHERE emp_id = 121;
+
+5. Alter the schema of the table Employee_Info to add a column Projects which stores a set of Projects done by the corresponding Employee.
+
+A. ALTER TABLE employee_info ADD projects set<text>;
+
+6. Update the altered table to add project names.
+
+A. 	cqlsh:employee> UPDATE employee_info SET projects = {'Tracker', 'E-com'} WHERE emp_id = 123;
+	cqlsh:employee> UPDATE employee_info SET projects = {'Tracker', 'E-com', 'Client project 1'} WHERE emp_id = 124;
+	cqlsh:employee> UPDATE employee_info SET projects = {'Tracker', 'Client project 1'} WHERE emp_id = 125;
+	cqlsh:employee> UPDATE employee_info SET projects = {'Tracker', 'Client project 15'} WHERE emp_id = 126;
+	cqlsh:employee> UPDATE employee_info SET projects = {'Tracker','Safety 101', 'Client project 20'} WHERE emp_id = 127;
+	cqlsh:employee> UPDATE employee_info SET projects = {'Tracker','Safety 101', 'Client project 21'} WHERE emp_id = 121;
+
+7. Create a TTL of 15 seconds to display the values of Employees.
+
+A. INSERT INTO employee_info(emp_id, emp_name, designation, date_of_joining, salary, dept_name) VALUES (111, 'Kratharth H', 'Assistant manager', '12-10-2019', 70000, 'Developer') USING TTL 15;
